@@ -10,6 +10,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,10 +22,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import peralta.sophia.cartelera.ui.theme.CarteleraTheme
 
 @Composable
-fun LoginScreen(onLoginOk:() -> Unit){
+fun LoginScreen(
+    onLoginOk:() -> Unit,
+    onRegister: () -> Unit){
     var user by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("")}
     var hayError by rememberSaveable { mutableStateOf(false) }
@@ -70,15 +75,26 @@ fun LoginScreen(onLoginOk:() -> Unit){
         }
         Button(
             onClick = {
-                if (user.trim() == "admin" && password == "6137") {
-                    onLoginOk()
-                } else {
+                if (user.isBlank() || password.isBlank()) {
                     hayError = true
+                } else {
+                    Firebase.auth.signInWithEmailAndPassword(user.trim(), password)
+                        . addOnCompleteListener {task ->
+                            if (task.isSuccessful) {
+                                onLoginOk()
+                            } else {
+                                hayError = true
+                            }
+                        }
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Log In")
+        }
+
+        TextButton(onClick = onRegister) {
+            Text("Don't have an account? Register")
         }
     }
 }
@@ -87,6 +103,6 @@ fun LoginScreen(onLoginOk:() -> Unit){
 @Composable
 fun LoginScreenPreview(){
     CarteleraTheme {
-        LoginScreen(onLoginOk = {})
+        LoginScreen(onLoginOk = {}, onRegister = {})
     }
 }

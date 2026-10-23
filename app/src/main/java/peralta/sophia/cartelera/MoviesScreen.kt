@@ -15,10 +15,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.keepScreenOn
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,14 +29,34 @@ import androidx.core.graphics.rotationMatrix
 import peralta.sophia.cartelera.ui.theme.CarteleraTheme
 
 @Composable
-fun MoviesScreen(onMovieClick: (Int) -> Unit){
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = "Movies",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(16.dp)
-        )
+fun MoviesScreen(
+    email: String,
+    onMovieClick: (Int) -> Unit,
+    onLogout: () -> Unit
+){
+    Column(modifier = Modifier.fillMaxSize()){
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            Column {
+                Text(
+                    text = "Movies",
+                    style = MaterialTheme.typography.headlineMedium,
+                )
+                Text(
+                    text = email,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            TextButton(onClick = onLogout) {
+                Text("Log out")
+            }
+        }
+        
         LazyColumn(
+            modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -46,6 +68,8 @@ fun MoviesScreen(onMovieClick: (Int) -> Unit){
             }
         }
     }
+
+
 }
 
 @Composable
@@ -83,5 +107,9 @@ fun MovieItem(movie: Movie, onClick: () -> Unit) {
 @Preview
 @Composable
 fun MoviesScreenPreview(){
-    MoviesScreen( onMovieClick = {})
+    MoviesScreen(
+        email = "jannette@correo.com",
+        onMovieClick = {},
+        onLogout = {}
+    )
 }
